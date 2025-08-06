@@ -14,7 +14,7 @@ jobs:
       - name: Checkout GroupDocs Blog repo
         uses: actions/checkout@main
         with:
-          repository: groupdocs/groupdocs-blog
+          repository: shoaibkhan-aspose/blog.groupdocs.com-sk
           token: ${{ secrets.REPO_TOKEN }}
           submodules: true  # Fetch Hugo themes (true OR recursive)
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
@@ -37,7 +37,7 @@ jobs:
       - name: Invalidate CloudFront
         uses: chetan/invalidate-cloudfront-action@v2
         env:
-          DISTRIBUTION: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_STAGING }}
+          DISTRIBUTION: ${{ secrets.CF_DIST_ID_BLOG_GD_COM_STAGING }}
           PATHS: '/*'
           AWS_REGION: 'us-west-2'
           AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
