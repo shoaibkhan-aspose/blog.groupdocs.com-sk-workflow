@@ -1,0 +1,47 @@
+name: Staging - GD.Classification
+
+on:
+  # push:
+  #   branches:
+  #     - main  # Set a branch to deploy
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GroupDocs Blog repo
+        uses: actions/checkout@main
+        with:
+          repository: shoaibkhan-aspose/blog.groupdocs.com-sk
+          token: ${{ secrets.REPO_TOKEN }}
+          submodules: true  # Fetch Hugo themes (true OR recursive)
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2.4.13
+        with:
+          hugo-version: '0.101.0'
+          extended: true
+
+      - name: Build Classification Blog Posts
+        run: hugo --config "config.yml,config.classification.staging.yml" \
+              --contentDir "content/GroupDocs.Blog/classification" \
+              --cleanDestinationDir
+        # run: hugo --config "config.yml,config.staging.yml" --cleanDestinationDir #-b "https://blog-qa.groupdocs.com/"  --minify
+    
+      - name: Deploy Home to S3 - (Staging)
+        run: hugo deploy --maxDeletes -1 --config "config.yml,config.classification.staging.yml" --target "staging"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS }}
+
+      - name: Invalidate CloudFront
+        uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          DISTRIBUTION: ${{ secrets.CF_DIST_ID_BLOG_GD_COM_STAGING }}
+          PATHS: '/*'
+          AWS_REGION: 'us-west-2'
+          AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS }}
