@@ -26,9 +26,7 @@ jobs:
           extended: true
 
       - name: Build Classification Blog Posts
-        run: hugo --config "config.yml,config.classification.staging.yml" \
-              --contentDir "content/GroupDocs.Blog/classification" \
-              --cleanDestinationDir
+        run: hugo --config "config.yml,config.classification.staging.yml" --contentDir "content/GroupDocs.Blog/classification" --cleanDestinationDir
         # run: hugo --config "config.yml,config.staging.yml" --cleanDestinationDir #-b "https://blog-qa.groupdocs.com/"  --minify
     
       - name: Deploy Home to S3 - (Staging)
